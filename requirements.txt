@@ -3,3 +3,4 @@ pykrx
 pandas
 matplotlib
 numpy
+setuptools
