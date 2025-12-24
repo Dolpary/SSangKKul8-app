@@ -3,18 +3,21 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import os
 
-# --- 한글 폰트 설정 (웹 배포용) ---
-# Streamlit Cloud 리눅스 환경에서는 'NanumGothic'을 설치해서 써야 함
-# 로컬 테스트를 위해 시스템 폰트 예외처리 추가
-import platform
-if platform.system() == 'Windows':
-    plt.rcParams['font.family'] = 'Malgun Gothic'
+# --- [수정] 한글 폰트 설정 (폰트 파일 직접 로딩 방식) ---
+# 1. 먼저 현재 폴더에 'NanumGothic.ttf' 파일이 있는지 확인
+font_path = "NanumGothic.ttf"
+
+if os.path.exists(font_path):
+    # 폰트 파일이 있으면(서버 배포용) 그걸 등록해서 사용
+    fm.fontManager.addfont(font_path)
+    font_name = fm.FontProperties(fname=font_path).get_name()
+    plt.rcParams['font.family'] = font_name
 else:
-    # 리눅스/서버 환경 (나중에 설정 필요)
-    plt.rcParams['font.family'] = 'NanumGothic'
+    # 폰트 파일이 없으면(로컬 윈도우 테스트용) 맑은 고딕 사용
+    plt.rcParams['font.family'] = 'Malgun Gothic'
 
 plt.rcParams['axes.unicode_minus'] = False
-# ----------------------------------
+# ----------------------------------------------------
 
 from pykrx import stock
 import pandas as pd
@@ -220,3 +223,4 @@ def draw_detail_chart(ticker, row, start, end, offset):
 if __name__ == "__main__":
 
     main()
+
