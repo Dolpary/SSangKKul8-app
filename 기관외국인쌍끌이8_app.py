@@ -164,16 +164,19 @@ def main():
     st.write(f"**분석 기간:** {start_day} ~ {end_day}")
     
     # 탭으로 종목 선택하게 만들기
-    tabs = st.tabs([f"{i+1}. {row['종목명']}" for i, row in top10.iterrows()])
+    # enumerate를 써서 순서(idx)를 0부터 강제로 만듦
+    tabs = st.tabs([f"{idx+1}. {row['종목명']}" for idx, (ticker, row) in enumerate(top10.iterrows())])
 
-    for i, tab in enumerate(tabs):
+    # --- [수정] 탭 내부 내용 채우기 ---
+    for idx, tab in enumerate(tabs):
         with tab:
-            ticker = top10.index[i]
-            row = top10.iloc[i]
+            # top10.iloc[idx]를 통해 순서대로 데이터에 접근
+            ticker = top10.index[idx]  # 티커(종목코드)
+            row = top10.iloc[idx]      # 데이터 행
             
             # --- 상세 차트 그리기 ---
             draw_detail_chart(ticker, row, start_day, end_day, offset_days)
-
+            
 def draw_detail_chart(ticker, row, start, end, offset):
     # 가격 데이터 (120일치 확보)
     graph_start = (datetime.strptime(end, "%Y%m%d") - timedelta(days=180)).strftime("%Y%m%d")
@@ -215,4 +218,5 @@ def draw_detail_chart(ticker, row, start, end, offset):
     st.pyplot(fig) # 웹 앱에 그림 전송
 
 if __name__ == "__main__":
+
     main()
